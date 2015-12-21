@@ -1,0 +1,31 @@
+SQL What style
+    Structed Query Language
+    what you want, not how to do
+    DML 80% search
+        Data Manipulation Language
+    DDL 15% DBA
+        Data Definition Language
+    DCL 5%
+        Data Control Language
+INSERT  列与值完全对应
+    insert into user (uid,name,age) values(1, 'lisi',23);
+    insert user (uid,name) values(2, 'lucy');
+    insert user (name) values('zhangsan');
+    insert user values(4, 'wangwu',20);
+    数字不用加单引号，也可以加，但是会有解析
+    字符串必须加单引号
+UPDATE  表 + 列 + 行
+    update user set age=8 where name='lucy';
+           表       列          行
+    update user set uid=0, 
+                    name='root', 
+                    age=0 where uid=2;
+    不加where条件将更改所有列
+DELETE  按行删除
+    delete from user where uid=0;
+    不加where条件将删除所有行
+SELECT
+    select uid, name from user where uid>0;
+
+1064 语法错误
+desc user;
