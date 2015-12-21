@@ -1,0 +1,136 @@
+1.查询模型
+    表中的列是变量，可以参与运算，
+    where是表达式(值为真假)，比较时，表达式为真，取出改行，否则，跳过改行
+
+    select name, age from user where uid=2;
+    select name, age from user where 1;
+    select name, age+1 from user where 1;
+    投影(取出列)，广义投影(用列参与运算)
+2.where 关键字
+    in (num1, num2)  在集合内
+    between and
+    or
+    and
+    <> !=
+    比较级    and >> or
+
+    select * from goods where cat_id in (4, 11);
+    select * from goods where cat_id ==4 or cat_id == 11;
+
+    select * from goods where shop_price between 100 and 300;
+    select * from goods where shop_price >=100 or price <=300;
+
+    select * from goods where cat_id != 3 and cat_id != 11;
+    select * from goods where cat_id not in (3, 11);
+    
+    select * from goods where (shop_price>100 and shop_price<300) or
+                            (shop_price>4000 and shop_price<5000);
+    select * from goods where cat_id=3 and 
+                    (shop_price<1000 or shop_price>3000) and click_count>5;
+
+    select * from goods where cat_id=1; // 子查询，错误
+    select * from goods where cat_id in (2, 3, 4, 5);
+
+3.模糊查询
+     like 
+    % 通配任意字符
+    _ 通配单个字符
+
+    select * from goods where goods_name like '诺基亚%';
+
+4.mysql手册
+    floor
+    select floor(num/10)*10 from main;
+    update main set num=floor(num/10)*10 where num between 20 and 30;
+
+    substring concat
+    select goods_name from goods where goods_name like '诺基亚%';
+    select concat('HTC', substring(goods_name, 4)) from goods
+                where goods_name like '诺基亚%';
+    update main set goods_name=concat('HTC', substring(goods_name, 4)) 
+                from goods
+                where goods_name like '诺基亚%';
+
+5.NULL
+    null参与运算表示此式为null，因此需要禁止null
+    select * from user where id=null;       // 空
+    select * from user where id is null;    // id为null的
+6.group分组与统计函数max min avg count sum
+    select cat_id, count(*) from goods group by cat_id;
+    内部先排序，在计算，比较耗费资源
+7.having 和 where
+    as 赋值语句
+    select goods_id, goods_name, (market_price-shop_price) as off 
+                having off >= 200;
+    select name,sum(count(score<60)) as cou, avg(score) from stu 
+            group by name
+            having cou >=2;
+            结果导向，要什么查什么
+            select name, avg(score) from stu group by name;
+            select name, count(score<60) from stu;
+            select name, sum(count(score<60)) from stu group by name;
+8.order by
+    asc     desc
+    select goods_id, goods_name from goods 
+            order by shop_price desc;
+    select goods_id, cat_id, shop_price from goods
+            order by cat_id asc, shop_price desc;
+
+
+    select查询 *.MYD文件，where条件针对此文件，查询结果集暂存在内存中
+    针对结果集的筛选用having
+9.limit offset, count
+    # 3-5
+    select goods_id, goods_name, shop_price from goods order by goods_id desc limit 2, 3;
+10.语法顺序
+    where, group by, having, order by, limit
+11.子查询
+    where型
+        select cat_id, goods_id, goods_name from goods 
+                where goods_id in 
+                (select max(goods_id) from goods group by cat_id);
+    from型
+        select cat_id, goods_id, goods_name from 
+                (select * from goods order by cat_id asc, goods_id desc) as tmp 
+                group by cat_id;
+        排序方式有问题,一直按照默认排序,并不会按照查询出的结果再进行选择
+    exists型
+        select * from category where exists 
+                (select * from goods where goods.cat_id = category.cat_id);
+        用于查询category下cat_id有对应的goods的栏目
+
+12.链接
+    内连接 逐行匹配 (对于有歧义的列需要用'表名.列名'进行说明)
+    select boy.hid, bname, girl.hid, gname 
+                from boy inner join girl 
+                on boy.hid = girl.hid;
+    左连接 显示左表所有数据, 空值位为NULL
+    select boy.hid, bname, girl.hid, gname 
+                from boy left join girl 
+                on boy.hid = girl.hid;
+    右连接 显示左表所有数据, 空值位为NULL
+    select boy.hid, bname, girl.hid, gname 
+                from boy right join girl 
+                on boy.hid = girl.hid;
+
+    为了消除歧义,有时需要给表起个别名
+    可以把选出来的表当做一个大的表来处理
+    select mid, hid, t1.tname as hname, mres, gid, t2.tname as gname, matime 
+                from m inner join t as t1 on m.hid = t1.tid 
+                       inner join t as t2 on m.gid = t2.tid;
+                where matime between '2006-06-01' and '2006-07-01'
+    输入\c+回车 取消执行当前代码
+13.Union
+    合并查找的结果及 N+M行数据
+    要求两个查询的列的数目必须相同, 列明不必相同
+    完全相等的行会合并, 且合并这个操作比较耗时, 一般不让union进行合并, 需要用union all
+    union子句不写order by, 总结果可以oeder by
+    select uid, name from user 
+                union all
+                select id, name from tmp
+                order by id;
+    select id, sum(num) as sum 
+                from (select * from a union all select * from b order by id) as tmp 
+                group by id;
+
+set names gbk;      改编码，通知服务器本地编码
