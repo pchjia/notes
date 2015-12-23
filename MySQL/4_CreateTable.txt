@@ -1,0 +1,146 @@
+ DDl 语言
+
+1. 建表就是声明表头的过程, 声明列(字段)的信息
+
+    create table t1(
+        sn int,
+        name varchar(10)
+    );
+
+    create table name(
+        column1 [type property default],
+        column2 [type property default],
+        column3 [type property default]
+    );
+2. 列类型和属性
+    数值型 整形 浮点型 定点型
+    字符型 char varchar text
+    日期和时间
+
+    整形列:            bytes
+        tinyint     1
+        smallint    2
+        mediumint   3
+        int         4
+        bigint      8
+    属性
+        unsigned    无符号
+        zerofill    用0填充至固定宽度 默认列为unsigned类型
+        M           宽度
+
+    列的默认值
+        null 查询不便, 索引效率不高, 应该避免列的值为null
+        声明not null 和 default
+            create t1(id int not null default 0, name char(10) not null default '');
+    主键与自增 primary key
+        能够区分每一行, 不允许重复
+            create table t1(id int primary key);
+            create table t2(id int, primary key(id));
+        自增 auto_increment 只能有一个自增列, 且此列必须加索引或(index/key)
+            create table t1(id int primary key auto_increment);
+
+
+    浮点列     存储近似值
+        float(M, D)[unsigned][zerofill]
+        double
+        decimal 定点型 存储精确值
+            M 精度 代表总位数
+            D 标度 代表小数点后的数
+            默认带有符号
+    字符型列
+        char(M)         定长  寻址快     适用于M比较小的情况
+                        不够长度会在右侧填充空格至给定长度, 取出时删除右侧空格(会丢失空格)
+                        限制的是字符, 不是字节, 采用charset的设置
+        varchar(M)     变长 额外占用空间来存储数据的长度   间接寻址
+    文本型 text          2的幂
+        tinytext        8       字符
+        blob            16      字节 二进制 存储声音, 图像等 用于防止因字符集的问题导致的信息丢失
+        text            16      字符
+        mediumblob      24      字节
+        mediumtext      24      字符
+        longblob        32      字节
+        longtext        32      字符
+    枚举类型   用于定制值的可能取值, 只允许出现范围内的值
+        enum    插入数据时只能选其中之一
+        set     插入数据时可以选几个
+    时间类型
+        year        年份1901-2169 可以简写成两位
+        date        1000/01/01 ~ 9999/12/31     字符串 '1993-09-15'
+        time        -835:59:59 ~ 835:59:59      字符串 '00:23:42'
+        datetime    1000/01/01 00:00:00 ~ 9999/12/31 23:59:59   字符串 '1993-09-15 00:23:42'
+        timestamp   距离1970-01-01 00:00:00的毫秒数
+            用int unsigned存储精确时间戳
+
+3.列的增删改
+    增加 add
+    删除 drop
+    修改 
+        change
+        modify 不能修改列名;
+    [add] | [drop] | [change]
+    alter table table_name 
+            add column_name property not null default ... 
+            [after column_name1] | [first];
+    alter table table_name drop column_name;
+    alter table table_name change column_name new_column_name property...;
+    alter table table_name modify column_name property...;
+4.视图 view 针对频繁查询的一条语句建立结果集
+    create view view_name as 
+            select goods_id, goods_name, (marker_price - shop_price) as off 
+            from goods;
+    select * from view_name;
+
+    又被成为虚拟表, 是sql语句的查询结果
+    作用
+        权限控制: 比如某几个列允许用户查询, 其他列不许用户查询
+        简化复杂的查询: 暂存一个子查询
+    是物理表的一个投影, 修改物理表, 视图也会跟着改变, 反之也成立. 但是不能修改经过计算的来的列.
+        相当于函数的对应关系, 是否完全可逆(单射).
+
+    Algorithm: 视图的存储方式(存储语句)
+        1. merge(合并) 当简单查询到来是, 将查询语句整合后再从原始数据表中查询;
+        2. temptable(临时表) 对于复杂的视图语句, 加上复杂的查询语句, 合并几乎不可能, 此时就会将视图暂存为临时表.
+        3. undefined 由系统自己决定
+
+        create algorithm=temptable view avg_goods as 
+                select cat_id, avg(shop_price) as shop_avg, 
+                avg(market_price) as market_avg
+                from goods
+                group by cat_id
+                order by cat_id;
+
+注:  
+    定长与变长分离
+        一个定长的表的查询会非常快
+    常用与不常用分离
+        把常用的信息, 优先考虑效率, 存储到一张表, 把不长用和比较占据空间的信息存储在辅助表中
+    rename table old_name to new_name;
+
+
+    egs.
+        create table t2( um tiny int unsigned );
+        alter t2 add sm tinyint(5) unsigned zerofill;
+        insert into t2(sm) values(-1); 
+        insert into t2 values(2550, 255); 
+
+        create table t3(gender enum('male', 'female'));
+
+        create table users(
+            id int unsigned primary key auto_increment,
+            name char(20) not null default '',
+            gender tinyint not null default 0,
+            weight tinyint unsigned not null default 0,
+            birth date not null default '1997-01-01',
+            salary decimal(8, 2) not null default 0.0,
+            lastlogin int unsigned not null default 0
+        );
+
+        create table users_intro(
+            id int unsigned primary key auto_increment,
+            name char(20) not null default '',
+            intro varchar(1500) not null default ''
+        );
+
+
+        // 当插入低于下边界的值的时候会填充最小值, 超过上边界时会填充最大值
+        concat()函数
