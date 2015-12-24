@@ -108,6 +108,27 @@
                 from goods
                 group by cat_id
                 order by cat_id;
+5. 表/视图的管理语句 
+    drop table table_name # 删除
+    drop view view_name
+    
+    desc table_name  # 表和视图没有说明差别   
+    show create table table_name # 查看建表过程(语句)
+    show create table/view view_name
+    show table status \G # 查看表详细信息(全部)
+        show table status where name = 'goods';
+    rename table old_name to new_name; # 改表名
+    
+    truncate table_name; # 清空表的数据(计数器也跟着删除了), 等同于drop table + create table
+    delete from table_name; # 删除数据(DML), 删除所有的行(auto_increment计数器还在增加)
+
+5. 存储引擎 数据的存储类型
+    分类
+        MyISAM  建表快
+        InnoDB  事务安全
+        Memory
+
+
 
 注:  
     定长与变长分离
