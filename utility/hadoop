@@ -1,0 +1,114 @@
+hdfs
+	Thrift
+	ACL 权限管理
+	HA Federation 高可用 多namenode
+yarn
+	资源管理 作业资源 用户资源 集群资源 支持内存和cpu两种资源
+	两级调度 ResourceManage -> ApplicationMaster
+	HA-Federation
+
+	MapReduce
+	Tez DAG Stinger{Hive next edition}
+	Storm Streaming 	360
+	Spark RDD
+
+安装生产环境hdfs
+准备
+	1. hosts
+	2. 主namenode ssh认证登陆
+	3. JDK
+	4. 非root权限
+配置文件修改
+	1. hadoop-env.sh  	JAVA_HOME			/path
+	2. core-site.xml	fs.defaultFS		hdfs://ip:port/
+	3. mapred-site.xml mapreduce.framework.name	yarn
+						  mapreduce.jobhistory.address	ip:port
+						  mapreduce.jobhistory.webapp.address	ip:port
+	4. hdfs-site.xml    
+		dfs.nameserver						test
+		dfs.ha.namenode.test				nn1, nn2
+		dfs.namenode.rpc-address.test.nn1  	ip:port
+		dfs.namenode.rpc-address.test.nn2  	ip:port
+		dfs.namenode.http-address.test.nn1 	ip:port{50070}
+		dfs.namenode.http-address.test.nn1 	ip:port{50070}
+		dfs.namenode.name.dir				file:///path/hadoop/name
+		dfs.namenode.shared.edits.dir		qjournal://ip:port;ip:port;ip:port/name-test {8485}
+		dfs.datanode.data.dir				file:///path/hadoop/hdfs/data
+		dfs.ha.automatic-failover.enabled 	false
+		dfs.journalnode.edits.dir			/path/hadoop/hdfs/journal
+	5. yarn-site.xml
+		yarn.resourcemanager.hostname			 ip
+		yarn.resourcemanager.address 			 ${yarn.resourcemanager.hostname}:port
+		yarn.resourcemanager.webapp.address 	 ${yarn.resourcemanager.hostname}:port
+		yarn.resourcemanager.webapp.http.address ${yarn.resourcemanager.hostname}:port
+		yarn.resourcemanager.resource-tracker.address ${yarn.resourcemanager.hostname}:port
+		yarn.resourcemanager.admin.address ${yarn-resourcemanager.hostname}:port
+		yarn.resourcemanager.scheduler.class		
+					org.apache.hadoop.yarn.srever.resourcemanager.schedler.fair.FairSchedule
+		yarn.scheduler.fair.allocation.file 	 ${yarn.home.dir}/etc/hadoop/fairscheduler.xml
+		yarn.nodemanager.local-dirs				 /path/hadoop/yarn/local
+		yarn.log-aggregation-eable				 true
+		yarn.nodemanager.remote-app-log-dir 	 /tmp/logs
+		yarn.nodemanager.resource.memory-mb 	 30720
+		yarn.nodemanager.resource.cpu-vcores 	 12
+		yarn.nodemanager.aux-services			 mapreduce_shuffle
+	6. slaves
+		slave-name-1
+		slave-name-2
+		slave-name-3
+	7. fairscheduler.xml 任务队列 资源配置 内存 cpu 运行app数 提交任务的用户
+		<?xml version="1.0"?>
+		<allocations>
+
+			<queue name="infrastructure">
+				<minResources>102400 mb, 50 vcores </minResources>
+				<maxResources>153600 mb, 100 vcores </maxResources>
+				<maxRunningApps>200</maxRunningApps>
+				<minSharePreemptionTimeout>300</minSharePreemptionTimeout>
+				<weight>1.0</weight>
+				<aclSubmitApps>root,yarn,search,hdfs</aclSubmitApps>
+			</queue>
+
+			<queue name="tool">
+				<minResources>102400 mb, 30 vcores</minResources>
+				<maxResources>153600 mb, 50 vcores</maxResources>
+			</queue>
+
+			<queue name="sentiment">
+				<minResources>102400 mb, 30 vcores</minResources>
+				<maxResources>153600 mb, 50 vcores</maxResources>
+			</queue>
+
+		</allocations>
+
+将配置文件同步到各个节点
+	scp /path/hadoop/etc/hadoop/* 	username@ip:/path/hadoop/etc/hadoop
+启动
+	journalnode:各个journalnode 
+		sbin/hadoop-daemon.sh start journalnode
+	nn1:nn1格式化
+		bin/hdfs namenode -format
+	nn1:启动namenode
+		sbin/hadoop-daemon.sh start namenode
+	nn2:nn2同步nn1元数据信息
+		bin/hdfs namenode -bootstrapStandby
+	nn2:启动nn2
+		sbin/hadoop-daemon.sh start namenode
+
+	nn1:将nn1切换为active
+		bin/hdfs haadmin -transitionToActive nn1 # 无zookeeper情况下
+	nn1:启动所有datanode
+		sbin/hadoop-daemons.sh start datanode
+	nn1:启动yarn:
+		sbin/start-yarn.sh
+	nn1:单节点运行历史记录服务程序
+	bin/mapred historyserver
+
+	nn1:关闭
+		sbin/stop-yarn.sh
+		sbin/stop-dfs.sh
+
+	直接启动
+		sbin/hadoop-daemon.sh start journalnode
+		sbin/hadoop-daemons.sh start namenode
+		sbin/hadoop-daemons.sh start datanode
