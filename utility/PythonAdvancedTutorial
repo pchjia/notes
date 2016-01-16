@@ -1,0 +1,295 @@
+1 Template
+    substitute(disc)
+        from string import Template
+
+        t = Template("$name has $count money")
+        data = dict(name="pc", count=200)
+
+        print(t.substitute(data))
+
+        # output: pc has 200 money
+
+    another function:
+        t.safe_substitute
+        a = {}
+        t.safe_substitute(a)
+
+        # output: $name has $count money
+
+    change delimiter
+        class MyTemplate(Template):
+            delimiter = "#"
+        t = MyTemplate("#name has #count money")
+    use purpose:
+        save time coding and reduce code size
+        MyPhoto$n$ext = MyPhoto_0.jpg, MyPhoto_1.jpg, etc...
+        and for website
+    futher features:
+        $$0 => $0
+        Regular Expresstion: override idpattern="[_a-z][_a-z0-9]" by default
+        {}: "the ${place}yard is far" => "the backyard is far"  (while the place="back")
+
+2. argparse
+    import argparse
+
+    positional arguments:
+        parser = argparse.ArgumentParser()
+        parser.add_argument("num", help="desc sentence", type=int)
+        args = parser.parse_args() # when running in scripts
+
+        args = parser.parse_args(["1") # running in ipython, requires a str list element
+        args = parser.parse_args(["-h"]) # show usage
+        print("the "+str(args.num) + "th fib number is " + str(res)))
+
+        # output: 1
+    optional arguments:
+        parser.add_argument("-o", "--output", help="Output the results to a file",
+                            action="store_true")
+
+        if args.output:
+            f = open("fibnacci.txt", "a")
+            f.write(str(result) + "\n")
+    mutually group:
+        group = parser.add_mutually_exclusive_group()
+        group.add_argument("-v", "--verbose", action="store_true")
+        group.add_argument("-q", "--quiet", action="stire_true")
+
+        if args.verbose:
+            print("the "+str(args.num) + "th fib number is " + str(res)))
+        else args.quiet:
+            print("Fib("+str(args.num)+") = " + str(res))
+        else:
+            print(res)
+    purpose
+        handle comandline option and arguments
+        generate and format usage and help output
+        allow dynamic data input to change the output
+    futher features
+        call function with a function 
+            create a subclass of argparse.Action
+            supply a __call__ method
+        nargs="+" or nargs=2
+3. Regular Expresstions
+
+4. MultiThreading
+    Thread
+    Lock
+    Semaphores
+
+5. networking
+    Socket Method
+        TCP
+        UDP
+
+
+
+
+
+
+
+
+scripts:
+1. tmp.py
+from string import Template
+
+def main():
+    t = Template("$name has $count money")
+    data = dict(name="pc", count=200)
+
+    print(t.substitute(data))
+
+if __name__ == "__main__":
+    main()
+    # output: pc has 200 money
+
+2.fibn.py
+import argparse
+
+def fib(n):
+    a, b = 0, 1
+    for i in range(n):
+        a, b = b, a+b
+    return a
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("num", help="desc sentence", type=int)
+    parser.add_argument("-o", "--output", help="Output the results to a file",
+                            action="store_true")
+    group = parser.add_mutually_exclusive_group()
+    group.add_argument("-v", "--verbose", action="store_true")
+    group.add_argument("-q", "--quiet", action="stire_true")
+
+    args = parser.parse_args()
+    res = fin(args.num)
+
+    if args.verbose:
+        print("the "+str(args.num) + "th fib number is " + str(res)))
+    else args.quiet:
+        print("Fib("+str(args.num)+") = " + str(res))
+    else:
+        print(res)
+
+    if args.output:
+        f = open("fibnacci.txt", "a")
+        f.write(str(result) + "\n")
+
+if __name__ == "__main__":
+    main()
+    # output: 1
+
+4. timer.py
+
+import threading
+import time
+
+tLock = threading.Lock()
+
+def timer(name, delay, repeat):
+    print("Timer: " + name + "started")
+    tLock.acquire()
+    print(name + " has acquired the lock")
+    while repeat > 0:
+        time.sleep(delay)
+        print(name + ": " + str(time.ctime(time.time())))
+        repeat -= 1
+    print(name + " is releasing the lock")
+    print("Time: " + name + "completed")
+    tLock.release()
+
+def main():
+    t1 = threading.Thread(target=timer, args=("Timer1"), 1, 5)
+    t2 = threading.Thread(target=timer, args=("Timer2"), 2, 5)
+    t1.start()
+    t2.start()
+    print("main() completed")
+
+if __name__ == "__main__":
+    main()
+
+
+asyncWrite.py
+
+import threading
+import time
+class AsyncWrite(threading.Thread):
+    def __init__(self, text, out):
+        threading.Thread.__init__()
+        self.text = text
+        self.out = out
+    def run(self):
+        f = open(self.out, "a")
+        f.write(self.text + "\n")
+        f.close()
+        time.sleep(2)
+        print("Finish Background file write to " + self.out)
+
+def main():
+    message = raw_input("Enter a string to store:")
+    background = AsyncWrite(message, "out.txt")
+    Background.start()
+    print("The program continue to run while it write in another thread")
+    print("========")
+
+    background.join()
+    print("Waited until thread was complete")
+if __name__ == "__main__":
+    main()
+
+5. tcpServer.py
+
+import socket
+
+def main():
+    host = "127.0.0.1"
+    port = 5000
+    
+    s = socket.socket()
+    s.bind((host, port))
+
+    s.listen(1)
+    conn, addr = s.accept()
+    print("Connection from: " + str(addr))
+    while True:
+        data = c.recv(1024)
+        if not data:
+            break
+        print("from connected user: " + str(data))
+        data = str(data).upper()
+        print("sending: " + str(data))
+        c.send(date)
+if __name__ == "__main__":
+    main()
+
+
+tcpClient.py
+
+import socket
+
+def main():
+    host = '127.0.0.1'
+    port = 5000
+
+    s = socket.socket()
+    s.connect((host, port))
+
+    messeage = raw_input("-> ")
+    while message != "q":
+        s.send(message)
+        data = s.recv(1024)
+        print("Received from server: " + str(data))
+        message = raw_input("-> ")
+    s.close()
+
+if __name__ == "__main__":
+    main()
+
+
+udpServer.py
+
+import Socket
+
+def main():
+    host = "127.0.0.1"
+    port = 5000
+
+    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    s.bind((host, port))
+
+    print("Server started.")
+
+    while True:
+        data, addr = recvfrom(1024)
+        print("message from " + str(addr))
+        print("from connect user: " + str(data))
+        data = str(data).upper()
+        print("sending: " + str(data))
+        s.sendto(data, addr)
+    s.close()
+
+if __name__ == "__main__":
+    main()
+
+
+udpClient.py
+
+import Socket
+
+def mian():
+    host = "127.0.0.1"
+    port = 5000
+    server = (host, port)
+
+    s = socket.socket(socket.AF_NET, socket.DGRAM)
+    s.bind(server)
+
+    message = raw_input("-> ")
+    while message != "q":
+        s.sendto(message, server)
+        data, addr = s.recivefrom(1024)
+        print("received form server:" + str(date))
+        message = raw_input("-> ")
+    s.close()
+
+if __name__ == "__main__":
+    main()
