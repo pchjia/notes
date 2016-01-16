@@ -1,0 +1,35 @@
+git
+    git config --global user.name "pchjia"
+    git config --global user.email "pchjia@sina.cn"
+    git init
+    git add .
+    git commit -m "commit message"
+
+    .gitignore // git ignore to commit
+
+    git diff // default
+    git diff --staged // workspace && staged
+    git deff --cached // staged && local repo
+
+    git rm hello.txt
+    git checkout -- hello.txt
+    git commit
+
+    git log/whatchanged
+
+    git remote
+    git clone
+    git pull   // 
+    git fetch  // make a new breanch
+    git push
+
+    git branch new_branch
+    git checkout new_branch
+    git show-branch
+    git diff master new_branch
+
+    git merge "message" HEAD new_branch
+    git checkout master
+    git pull . new_branch
+
+    git tag -a Beta -m "make beta"
