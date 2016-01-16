@@ -1,0 +1,56 @@
+1. split 窗口切换：
+    <C-w> s     水平分割, 新窗口仍然是当前文件缓冲
+    <C-w> v     垂直分割
+
+    :split {file}       水平分割，并打开文件
+    :vsplit {file}      垂直分割，并打开文件
+
+    <C-w> h     切换到左边的窗口
+    <C-w> l     切换到右边
+    <C-w> k     切换到上边
+    <C-w> j     切换到下边
+
+    <C-w> c :close
+    <C-w> o :only
+
+    <C-w>=      所有窗口等宽
+    <C-w>|      最大化活动窗口宽度
+    <C-w>_      最大化活动窗口高度
+2. tabedit 标签页
+    :tabedit {filename} 在新标签打开file
+    <C-w>T      把当前窗口移到新标签页
+    :tabmove [N] 自动排列标签，
+    :tabclose
+    :tabonly
+
+    :tabnext {n}    切换到编号为N的标签页
+    :tabnext  gt
+    :tabproviev  gT
+3. colortheme 主题设置
+    colortheme molokai
+    colortheme solarized
+
+4. command
+    :!shell command
+
+5. copy and past
+    :reg    列出缓存区
+    "{N}y   复制内容到N号寄存器
+    "{N}p   粘贴N号寄存器的内容
+6. 使用鼠标
+    set mouse=a
+7. vim中使用命令行
+   添加插件 Conque 到./vim/plugin/目录下
+
+   command usage
+       :ConqueTerm <command>
+       :ConqueTermSplit <command> 
+       :ConqueTermVSplit <command> 
+       :ConqueTermTab <command> 
+   eg:
+       :ConqueTermSplit zsh
+8. fonts:
+    Noto\ Mono\ 12
+9. Vundle
+    vim +PluginInstall +qall
+    :PluginInstall ConqueShell
