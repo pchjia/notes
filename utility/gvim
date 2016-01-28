@@ -1,6 +1,7 @@
 1. split 窗口切换：
     <C-w> s     水平分割, 新窗口仍然是当前文件缓冲
     <C-w> v     垂直分割
+    <C-e> file explorer
 
     :split {file}       水平分割，并打开文件
     :vsplit {file}      垂直分割，并打开文件
