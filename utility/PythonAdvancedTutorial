@@ -91,6 +91,24 @@
         import cgi
         cgitb: cgi trace back
 
+7. Database interaction
+    here is how: # just like socket
+        import database_module
+        try:
+            con = database.connect()
+            cur = con.cursor()
+            cur.execute("query languages")
+            cur.submit()
+
+            cur.execute("query select")
+            data = cur.fetchall() # return tuples
+            print(data)
+        except:
+            if con:
+                print("Query Error")
+        finally:
+            if con:
+                con.close()
 
 
 
