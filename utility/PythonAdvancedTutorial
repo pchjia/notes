@@ -105,11 +105,16 @@
             print(data)
         except:
             if con:
+                cur.rollback()
                 print("Query Error")
         finally:
             if con:
                 con.close()
 
+    cursor.executescript("""
+            here is the script data, every query line seprated by ";"
+            """)
+    cursor.executemany("insert into table_name values(?, ?, ?)", ((1, "a", 100), (2, "b", 200)))
 
 
 
