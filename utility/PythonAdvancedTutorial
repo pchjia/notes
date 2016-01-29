@@ -81,6 +81,16 @@
         TCP
         UDP
 
+6. CGI_programing
+    commen gateway interface
+    need
+        web server
+        configure
+        python scripts
+    cgi modules
+        import cgi
+        cgitb: cgi trace back
+
 
 
 
