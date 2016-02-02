@@ -98,14 +98,15 @@
         # then import MySQLdb
         try:
             con = database.connect()
+            con.select_db("db_name")
             cur = con.cursor()
             cur.execute("query languages")
             cur.submit()
 
-            cur.execute("query select")
+            cur.execute("query languages")
             data = cur.fetchall() # return tuples
             print(data)
-        except:
+        except Exception:
             if con:
                 cur.rollback()
                 print("Query Error")
@@ -118,6 +119,11 @@
             """)
     cursor.executemany("insert into table_name values(?, ?, ?)", ((1, "a", 100), (2, "b", 200)))
 
+            # cur.fetchone()
+            # cur.fetchmany(int)
+            # cur.scroll(0, 'absolute')
+            # cur.close()
+            # con.close()
 
 
 
