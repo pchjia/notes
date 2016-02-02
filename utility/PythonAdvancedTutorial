@@ -94,6 +94,8 @@
 7. Database interaction
     here is how: # just like socket
         import database_module
+        # for mysql, first install MySQL-python
+        # then import MySQLdb
         try:
             con = database.connect()
             cur = con.cursor()
