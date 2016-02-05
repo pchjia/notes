@@ -163,12 +163,12 @@
         );
 
         create table classes(id int unsigned not null auto_increment, 
-            name char(20) not null default '', 
-            time char(10) not null default '', 
-            level char(5) not null default '', 
+            name char(40) not null default '', 
+            time char(20) not null default '', 
+            level char(10) not null default '', 
             learn_number int not null default 0, 
-            url char(40) not null default '', 
-            des varchar(60) not null default '', 
+            url char(60) not null default '', 
+            des varchar(120) not null default '', 
             primary key (id));
 
 
