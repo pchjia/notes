@@ -162,6 +162,15 @@
             intro varchar(1500) not null default ''
         );
 
+        create table classes(id int unsigned not null auto_increment, 
+            name char(20) not null default '', 
+            time char(10) not null default '', 
+            level char(5) not null default '', 
+            learn_number int not null default 0, 
+            url char(40) not null default '', 
+            des varchar(60) not null default '', 
+            primary key (id));
+
 
         // 当插入低于下边界的值的时候会填充最小值, 超过上边界时会填充最大值
         concat()函数
