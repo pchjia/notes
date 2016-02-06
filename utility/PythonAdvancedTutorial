@@ -76,6 +76,13 @@
     Lock
     Semaphores
 
+    # from jikexueyuan
+    from nultiprocessing.dumpy import Pool
+    pool = Pool(8)
+    result = pool.map(function, url)
+    pool.close()
+    pool.join()
+
 5. networking
     Socket Method
         TCP

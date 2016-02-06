@@ -1,0 +1,18 @@
+xpath
+    module lxml
+    from lxml import etree
+    selector = etree.HTML(html_string)
+    selector.xpath("...") # to extract something you want, returns a list
+
+    sytax:
+        // root node
+        / down to children node
+        /text() extract text content
+        /@*** extract attributes
+
+        starts with same codes
+        starts-with(@attr_name, attr_same_section)
+            eg: //div[starts-with(@id, 'test')]/text() 
+
+        string(.) hierachy codes
+            eg: selector.xpath(//div[@id='test'])[0].xpath('string(.)').replace('\n', '').replace(' ', '')
