@@ -16,3 +16,28 @@ xpath
 
         string(.) hierachy codes
             eg: selector.xpath(//div[@id='test'])[0].xpath('string(.)').replace('\n', '').replace(' ', '')
+
+emulate login sina weibo 
+    Fildder WireShark
+    adv module: smtplib # send mail
+
+    cook = {"Cookies": "..."} # login, copy cookies here from browser
+    requests.get(url, cookies=cook)
+
+    url 
+    url_login
+
+    password
+    vk
+    action
+
+    data = {
+     'mobile': '...',
+     password: '...',
+     ...
+    }
+    html = requests.post(url, data=data)
+
+
+
+
