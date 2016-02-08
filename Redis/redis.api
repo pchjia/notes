@@ -1,0 +1,118 @@
+start:
+    redis-server /path/to/config.conf
+    set deamonize yes' to run server back-end
+
+stop:
+    redis-cli shutdown
+
+数据类型:
+    String 二进制安全，可以包含任何数据，比如jpg图片或者序列化图像
+        set name pchjia             # name=pchjia <key, value>
+        get name                    # 通过键获取值
+        getset                      # 设置key的值并返回key的旧值
+
+        setnx name new_name         # not exist 是设置值，返回1，exist时返回0
+
+        setex                       # 设置键值对的建有效期
+            setex haircolor 10 red  # 10s
+
+        setrange                    # 更新value部分区域
+            setrange name 3 Jia     # 开始位置下标
+        setrange name 0 2           # 返回值的部分内容，左右都包括
+
+        mset                        # 一次性设置多个值，返回0表示没有任何值被设置
+            mset k1 v1 k2 v2
+        msetnx                      # 不覆盖已经存在的key
+        mget                        # 批量获取
+            mget k1 k2 k3
+
+        incr                        # 自增，如果键不存在，默认为0
+            incr age
+        incrby                      # 自增n个值
+            incrby age -5
+        decr decrby                 # 类似，表示递减
+
+        append                      # 给指定的key的值增加一段字符串，返回增加后的长度
+            append name .com
+
+        strlen                      # 查看制定key的value的长度
+
+
+    Hash 哈希 适用于存储对象
+        hset    # 设置hash field为指定值，返回一个整型值
+            hset user:001 name pchjia
+        hget 
+            hget user:001 name
+        hsetnx
+        hmset user:001 name pchajia age 23
+        hmget user:001 name age
+        hincrby user:001 age -1
+        hexists user:001 name       # hash 的name字段是否存在
+        hlen user:001               # 返回hash的field的数量
+        hdel user:001 age           # 删除指定hash的某个field
+        hkeys user:001              # 返回指定hash的所有字段
+        hvals user:001              # 返回制订hash的所以value
+        hgetall user:001            # 返回指定hash的所以field和value，交替返回
+
+
+    List 链表 双向
+        lpush list_name content     # 头部压入元素
+        lpop list_name              # 头部删除并返回元素
+        lrange list_name 0 -1       # all vals in list
+
+        rpush list_name content
+        rpop list_name
+
+        linsert list_name before content new_content # 插入
+        lset list_name index_num content        # 重新赋值指定下表的元素
+        lrem list_name n content    # 删除n个与value相同的元素，n<0：从尾删除，n=0：全部删除
+        ltrim list_name 0 -1        # 保留指定key的取值范围内的数据
+
+        rpoplpush list_1 list_2     # 从list1尾部移除元素添加到list2头部
+
+        lindex list_name n          # 返回list中第n位元素
+
+        llen list_name              # 返回list中元素个数
+
+
+    Set String类型的无序集合，通过hash table实现，有取并，交，差等操作
+
+        sadd set_name content       # 添加元素
+        srem set_name content       # 删除元素
+
+        smembers set_name           # 返回集合中的所有元素
+        sismember set_name content  # 测试集合中是否包含元素
+        srandmember set_name        # 随机返回set中的一个元素但不删除
+        spop set_name               # 随机返回set中的一个元素并删除
+
+        sdiff set1 set2             # 差集，返回set1中不在set2中的元素
+        sdiffstore set_diff set1 set2 # 将差集存入set_store中
+
+        sinter set1 set2            # 交集
+        sinterstore set_inter set1 set2
+
+        sunion set1 set2            # 并集
+        sunionstore set_union set1 set2
+
+        smove set1 set2 content     # 将第一个集合的元素移到第二个集合中
+
+        scard set_name # 返回集合元素个数
+
+
+    Sorted set # 有序集合，制定顺序，添加元素时自动排序
+        zadd zset_name n content    # 在第n位插入元素
+        zrange zset_name 0 -1 withscores # 按下表升序排序
+        zrevrange zser_name 0 -1    # 降序排序
+        zrangebyscore zset_name 1 2 # 返回score值在给定区间内的元素
+        zrem zset_name content      # 删除元素
+
+        zincrby zset_name incre_number content # 对set的content增加顺序值
+
+        zrank zset_name content     # 返回集合中content的排名(下标)
+        zrevrank zset_name content  # 返回集合中content的逆序排名(下标)
+
+        zcount zset_name 1 2        # 返回集合中score在给定区间的元素的数量
+        zcard zset_name             # 返回集合中所有元素的个数
+
+        zremrangebyrank zset 0 -1   # 删除集合中下标在给定区间的元素
+        zremrangebyscore zset 0 3   # 删除集合中score在给定区间的元素
