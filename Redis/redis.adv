@@ -1,0 +1,90 @@
+1. 安全性
+    密码            # 从外部可以进行15k/1s 的密码尝试
+    修改redis.conf 字段 requirepass password
+    认证：
+        redis-cli进入后输入auth password
+        redic-cli -a password
+
+
+2. 主从复制 可以是多个slave拥有与master相同的数据库副本
+    特点：
+        master可以拥有多个slave
+        slave可以连接同一个master或其他slave
+        主从复制不会阻塞master，可以同时处理client请求
+        提高系统的伸缩性
+
+    过程：
+        slave与master连接，发送sync命令
+        master启动新的进程将数据库保存到文件中，同时收集client新的写命令并缓存
+        后台保存完成后，master将此文件发送给slave
+        slave将文件保存到硬盘
+
+    配置： 只需配置slave
+        redis.conf 添加 
+        slaveof ip port
+        masterauth password     # 主机密码
+
+    查看主从：
+        info            # role
+
+
+3. 事务处理
+    redis只能保证一个client发起的事务中的命令可以连续的执行，而中间不会插入其他
+    client的命令。当一个client在一个连接中发出multi命令时，这个连接会进入一个事
+    务上下文，这个连接的后续命令不会立即执行，而是先放到一个队列中，当执行exec
+    命令时，redis会顺序执行队列的所以命令。
+
+    multi               # 打开事务上下文
+    ...
+    exec/discard        # 提交/取消事务
+
+    事务提交失败不会自动回滚
+        set name pchjia
+        set age 20
+        multi
+        incr age
+        inct name
+        exec
+
+    乐观锁 类似于版本控制器，每次更新版本号自增
+
+        watch key..     # 监视指定key，可以是多个，如果key在之后发生变化，则事务失败
+        multi           # exec discard unwatch 都会清除监视
+        ...
+        set key ... 
+        exec            #如果事务开始后，key被其他session修改过，则提交不成功
+
+
+4. 持久化机制
+    redis需要经常将内存中的数据同步到本地硬盘
+    方式：
+        snapshot 快照 默认的方式
+        append-only file AOF 将写、更改等操作写到文件，重启时会重新执行文件中的
+                        命令来重建数据库
+    redisis.conf 
+        save n m        # n秒内超过m个键被修改进行快照保存
+
+        appendonly yes
+        appendfsync everysec/always/no # 收到写命令每秒钟/立刻/依赖os写入磁盘中
+
+
+5. 发布订阅消息
+    pub/sub 消息通信方式，用于解除消息发布者和消息订阅者之间的耦合，redis起到
+    消息路由的功能。订阅者使用subscribe 和 psubscribe命令向redis server订阅自己
+    感兴趣的信息类型，redis将信息类型称为通道(channel)。发布者通过publish命令向
+    redis server发送特定类型的信息时，订阅该信息的全部client都会收到此消息
+
+    subscribe channel       # 订阅
+    publish channel hello   # 发布信息
+
+
+6. 虚拟内存的使用
+    暂时把不经常访问的数据从内存交换到磁盘中。
+
+    redis.conf
+        vm-enabled yes                  # 开启vm功能
+        vm-swap-file /tmp/redis.swap    # 交换出来的value的保存路径
+        vm-max-memory 1000000           # 使用的内存最大上线
+        vm-page-size 32                 # 每个页面大小32字节
+        vm-pages 134217728              # 最多使用的页数
+        vm-max-threads 4                # 用于执行换入工作的线程数
