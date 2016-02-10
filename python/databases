@@ -1,0 +1,13 @@
+mysql:
+    mysql py3
+    MySQLdb py2
+
+mongodb:
+    pymongo
+    mongodb --dbpath /path # to run the server
+    mongo # to open a client
+
+redis:
+    scrapy-redis
+    redis-server /etc/redis.conf # to run the server
+    redis-cli flushdb # to flush cache
