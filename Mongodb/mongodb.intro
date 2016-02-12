@@ -1,0 +1,63 @@
+mongodb 文档数据库，存储的是Bson（json的二进制化）文档
+
+特点：
+    内部执行引擎使用javascript解释器，把文档存储成bson结构，查询时转换成js对象，并可通过js的语法来操作
+    磁盘 -> gridFS -> Json 对象的二进制化即Bson
+    传统型数据库：数据服从定义好的表结构
+    No-SQL数据库：表中的每个内容都可有自己独特的结构
+    文档型数据库的反范式化
+
+
+1. 安装
+    mongodb.org -> download -> stable version
+    解压即可使用
+    bin目录文件：
+        mongo       客户端
+        mongod      服务端
+        mongos      路由器，集群、分片时使用
+
+        mongoexport 人类可读的json/csv/tsv文档
+        mongoimport 导入json/csv/tsv
+
+        mongodump   导出bson数据
+        mongostore  导入bson
+        bsondump    bson转换为json
+        mongoplog
+
+        mongostat   状态
+        mongostop
+        mongosniff
+
+
+2. 启动 mongod
+    指定参数：
+        --dbpath /path/for/databases
+        --logpath /path/for/logs
+        --fork # 以后台运行
+        --port 27017
+    启动:
+        mkdir -p /home/pchjia/mongodb/data /home/pchjia/mongodb/log
+        mongod --dbpath /home/pchjia/mongodb/data/ --logpath /home/pchjia/mongodb/log/mongodb.log --fork
+    客户端：
+        mongo
+    mongodb 占用磁盘3个多G，可以使用--smallfiles启动，此时占用大约400M
+
+
+3. mongodb命令
+    show databases/dbs
+    use database_name
+    show tables/collections
+
+    create:
+        use database_name                   # 可以不存在此数据库，隐式创建数据库
+        db.createCollection('collection_name')
+        # 等价于
+        db.collection_name.insert(document)
+    drop:
+        db.dropDatabase()
+        db.collaction_name.drop()           # 删除collection
+    insert:
+        db.collaction_name.insert({name: 'pchjia', age: 23})
+    find:
+        db.collaction_name.find()           # 查看表中所有文档
+
