@@ -1,0 +1,31 @@
+Insert: 增
+    db.collection_name.insert({...{}...})               # json格式的文档对象
+        db.user.insert({name: 'pchjia', age: 23, school: 'hnu', phone:''})
+    db.collection_name.insert([{...}, {...}, ...])      # 多篇文档的插入
+
+Remove: 删
+    db.collection_name.remove(query, option)            # 删除，
+                                                        # 查询表达式也是json对象，表达式匹配的行被删除，不写表示所有
+                                                        # 选项表示收否删除一行，默认为false
+        db.user.insert(remove({name: 'pchjia'}， true)
+
+Update: 改
+    db.collection_name.update(query, expr, option)   # 用新值替换匹配项，或提供一个赋值表达式
+        db.user.update({name: 'pchjia'}, {name: 'pc'})  # 用新值替换
+        db.user.update({name: 'pchjia'}, {$set: {name: 'pc'}})      # 只更改文档中的部分值
+    赋值表达式可选的参数有：
+        $inc            自增                        $inc: {age: 1}
+        $rename         重命名列                    $rename: {school: 'collage'}
+        $setOnInsert    当upsert为true，并发生insert操作时，补充设置字段的值
+        $set            设置新值                    $set: {name: 'pc'}
+        $unset          删除指定的列                $unset: {phone: 1}
+            db.user.update({name: 'pchjia'}, {$set: {name: 'pc'}, $inc: {age: 1}, $rename: {school: 'collage'}, $unset:{phone: 1}})
+            db.user.update({name: 'pchjia'}, {$set: {age: 23}, $setOnInsert: {collage: 'hnu'}}, {upsert: true})
+    option:
+        upsert: true/false                  # 没有匹配的行时，直接插入该行
+        nulti: true/false                   # 修改多行
+            db.user.update({collage: 'hnu'}, {$set: {collage: 'Hunan University'}}, {nulti: true})
+Find: 查
+    db.collection_name.find(expr, collums)  # 查询表达式，要查询的列
+        db.user.find({}, {age: 1, _id:0})   # 屏蔽id列
+
