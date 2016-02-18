@@ -32,3 +32,74 @@
         var cursor = db.test.find()
         curson.toArray()
 
+3. 索引 加索引会提高查询速度，也会减慢插入速度，默认是用btree来组织索引文件
+    db.collection_name.ensureIndex({a: 1/-1})                       # 将a列按升序/降序建立索引，不存在的列建立索引值为null
+    db.collection_name.getIndexes()                                 # 查看当前索引
+
+    db.collection_name.createIndex({a: 1})                          # 创建索引
+    db.collection.createIndex( { a: 1, b: 1, c: 1 } )               # 创建多列索引
+    db.collection.createIndex( { a: 1 }, { unique: true } )         # 创建唯一索引，取值不重复的列
+    db.collection.createIndex( { a: 1, b: 1 }, { unique: true } )   # 创建多列的唯一索引
+
+    db.collection.createIndex(
+       { a: 1 },
+       { partialFilterExpression: { b: { $gt: 5 } } }
+    )                                       # 创建局部索引
+
+    db.collection.createIndex( { a: 1 }, { sparse: true } )         # 创建稀疏索引，不含此列不建立索引
+    db.collection.createIndex( { _id: "hashed" } )                  # 创建hash索引
+    db.collection.createIndex({'a.b':1})    # 子文档加索引，用点表示引用子文档
+
+    db.collection.dropIndex({a: -1})        # 删除索引
+    db.collection.dropIndexes()             # 删除所有索引
+
+    修改索引需要删除索引并重新建立索引
+
+    db.accounts.reIndex()   # 重建索引，减少碎片，集合经过一段时间的修改后，表中的文件容易出现空洞，查询效率不高
+
+
+注明:
+    子文档查询：
+        db.user.insert({name: 'pc', subject: {math: 90, english: 90}})
+        db.user.find({'subject.math': {$exists: 1}}, {_id: 0,'subject.math':1})
+
+4. 用户管理
+    mongodb中有一个admin数据库
+    mongodb中用户以数据库为单位，每个数据库都有自己的管理员，先在admin中建立超级管理员，再管理其他数据库
+    启动mongodb时需要加上--auth选项
+
+    db.createUser({ user: "<name>",
+      pwd: "<cleartext password>",
+      customData: { <any information> },
+      roles: [
+        { role: "<role>", db: "<database>" } | "<role>",
+        ...
+      ]
+    })
+
+    db.createUser({user: 'pchjia', pwd: 'jia9692', roles: []})
+    db.createUser({user: 'pchjia', pwd: 'jia9692', roles: [{role: 'clusterAdmin', db: 'admin'}, {role: 'readAnyDatabase', db: 'admin'}, 'readWrite', 'dbOwner']})
+
+    use admin
+    db.auth('user_name', 'password')
+
+    see: built-in roles
+        https://docs.mongodb.org/manual/reference/built-in-roles/#database-administration-roles
+
+    db.dropUser('user_name')
+
+    db.revokeRolesFromUser(
+        "reportsUser",
+        [
+          { role: "readWrite", db: "accounts" }
+        ]
+    )
+
+    db.grantRolesToUser(
+        "reportsUser",
+        [
+          { role: "read", db: "accounts" }
+        ]
+    )
+
+    db.changeUserPassword("user_name", "new_password")
