@@ -79,7 +79,7 @@
 
     db.createUser({user: 'pchjia', pwd: 'jia9692', roles: []})
     db.createUser({user: 'pchjia', pwd: 'jia9692', roles: [{role: 'clusterAdmin', db: 'admin'}, {role: 'readAnyDatabase', db: 'admin'}, 'readWrite', 'dbOwner']})
-
+    db.addUser({ user: "myadmin", pwd: "1234", roles: ["userAdminAnyDatabase"] })
     use admin
     db.auth('user_name', 'password')
 
@@ -103,3 +103,82 @@
     )
 
     db.changeUserPassword("user_name", "new_password")
+
+5. 备份与恢复
+    mongo --host host --port port --username username --password password
+
+    mongoexport --help
+        -u, --username=<username>                       username for authentication
+        -p, --password=<password>                       password for authentication
+          --authenticationDatabase=<database-name>    database that holds the user's credentials
+          --authenticationMechanism=<mechanism>       authentication mechanism to use
+        -d, --db=<database-name>                        database to use
+        -c, --collection=<collection-name>              collection to use
+        -f, --fields=<field>[,<field>]*                 comma separated list of field names (required for exporting CSV) e.g. -f "name,age"
+          --fieldFile=<filename>                      file with field names - 1 per line
+          --type=<type>                               the output format, either json or csv (defaults to 'json')
+        -o, --out=<filename>                            output file; if not specified, stdout is used
+          --jsonArray                                 output to a JSON array rather than one object per line
+          --pretty                                    output JSON formatted to be human-readable
+          --csv                                       csv file, 便于和传统数据库交换数据
+        -q, --query=<json>                              query filter, as a JSON string, e.g., '{x:{$gt:1}}'
+          --queryFile=<filename>                      path to a file containing a query filter (JSON)
+
+        mongoexport -d test -c test -o test.json
+
+    mongoimport --help
+        -u, --username=<username>                       username for authentication
+        -p, --password=<password>                       password for authentication
+          --authenticationDatabase=<database-name>    database that holds the user's credentials
+          --authenticationMechanism=<mechanism>       authentication mechanism to use
+        -d, --db=<database-name>                        database to use
+        -c, --collection=<collection-name>              collection to use
+        -f, --fields=<field>[,<field>]*                 comma separated list of field names, e.g. -f name,age
+          --fieldFile=<filename>                      file with field names - 1 per line
+          --file=<filename>                           file to import from; if not specified, stdin is used
+          --headerline                                use first line in input source as the field list (CSV and TSV only)
+          --jsonArray                                 treat input source as a JSON array
+          --type=<type>                               input format to import: json, csv, or tsv (defaults to 'json')
+
+          --drop                                      drop collection before inserting documents
+          --ignoreBlanks                              ignore fields with empty values in CSV and TSV
+          --maintainInsertionOrder                    insert documents in the order of their appearance in the input source
+        -j, --numInsertionWorkers=<number>              number of insert operations to run concurrently (defaults to 1)
+          --stopOnError                               stop importing at first insert/upsert error
+          --upsert                                    insert or update objects that already exist
+          --upsertFields=<field>[,<field>]*           comma-separated fields for the query part of the upsert
+          --writeConcern=<write-concern-specifier>    write concern options e.g. --writeConcern majority, --writeConcern '{w: 3,
+                                                  wtimeout: 500, fsync: true, j: true}' (defaults to 'majority')
+
+        mongoimport -d test -c fun -f filename --type=json 
+
+    导出二进制可以保留索引，用于备份和回复。导出json用于数据库之间传递数据
+        mongodump -d database -c collection
+        mongorestore -d database -c collection --dir=/path
+
+6. Replication 复制集，提高可用性。HA
+    共同维护相同的内容
+
+    mkdir -p /data/r0 /data/r1 /data/r2 /var/log/
+    # 声明属于的复制集
+    mongod --port 27017 --dbpath /data/r0 --logpath /var/log/mongodbr0.log --smallfiles --replSet rsa --fork --auth 
+    mongod --port 27018 --dbpath /data/r1 --logpath /var/log/mongodbr1.log --smallfiles --replSet rsa --fork --auth 
+    mongod --port 27019 --dbpath /data/r2 --logpath /var/log/mongodbr2.log --smallfiles --replSet rsa --fork --auth 
+
+    # 配置文件
+    var rsconf = {
+      _id: 'rsa',
+      members: [{_id: 0, host: 'ip:port'}, {_id: 1, host: 'ip:port'}, {_id: 2, host: 'ip:port'}]
+    }
+
+    # 初始化
+    rs.initiate(rsconf)
+    rs.status()
+    rs.reconfig(rsconf)
+    rs.add('ip:port')       # 添加节点
+    rs.remove('ip:port')    # 删除节点
+
+    # slave节点默认不许读写，执行下述命令即可
+    rs.slaveOk()
+
+
