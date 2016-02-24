@@ -1,0 +1,6 @@
+number:
+    math, random, decimal.Decimal
+    numpy, scipy, matplotlib
+
+string:
+    re
