@@ -4,3 +4,18 @@ number:
 
 string:
     re
+
+time:
+    datatime, time
+
+list, tuple, dict:
+    copy.deepcopy(name)
+    dict(zip(list_1, list_2))
+
+file:
+    codecs, os, shelve, cPickle // serilization
+        f = codecs.open(filename, mode, encoding)
+
+encrypt:
+    hashlib
+        hashlib.md5(password)
