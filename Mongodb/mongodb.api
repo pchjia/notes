@@ -23,7 +23,7 @@ Update: 改
             db.user.update({name: 'pchjia'}, {$set: {age: 23}, $setOnInsert: {collage: 'hnu'}}, {upsert: true})
     option:
         upsert: true/false                  # 没有匹配的行时，直接插入该行
-        nulti: true/false                   # 修改多行
+        multi: true/false                   # 修改多行
             db.user.update({collage: 'hnu'}, {$set: {collage: 'Hunan University'}}, {nulti: true})
 Find: 查
     db.collection_name.find(expr, collums)  # 查询表达式，要查询的列

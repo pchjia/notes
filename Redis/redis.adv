@@ -43,7 +43,7 @@
         set age 20
         multi
         incr age
-        inct name
+        incr name
         exec
 
     乐观锁 类似于版本控制器，每次更新版本号自增
