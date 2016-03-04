@@ -2,8 +2,11 @@
 > 这里存放我的笔记
 
 ## 说明
->- MySQL文件夹
-> mysql语法, 查询, 建表等
+>- MySQL -- mysql语法, 查询, 建表等
+>- Mongodb -- mongodb 介绍，使用，api等
+>- Redis -- Redis 数据库介绍和使用
 
->- utility
-> 其他useful的笔记
+>- Python -- Python maigcs . yes that's it
+
+>- utility -- 其他useful的笔记
+
