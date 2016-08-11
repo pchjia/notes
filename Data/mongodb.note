@@ -1,0 +1,86 @@
+pymongo
+
+from pymongo import MongoClient
+client = MongoClient()
+client = MongoClient("mongodb://mongodb0.example.net:27019")
+db = client.primer
+db = client['primer']
+db.dataset
+db['dataset']
+coll = db.dataset
+coll = db['dataset']
+result = db.restaurants.insert_one({...})
+cursor = db.restaurants.find({"borough": "Manhattan"})
+{ <field1>: <value1>, <field2>: <value2>, ... }
+cursor = db.restaurants.find({"grades.score": {"$gt": 30}})
+{ <field1>: { <operator1>: <value1> } }
+
+and
+    cursor = db.restaurants.find({"cuisine": "Italian", "address.zipcode": "10075"})
+or
+    cursor = db.restaurants.find({"$or": [{"cuisine": "Italian"}, {"address.zipcode": "10075"}]})
+sort
+    import pymongo
+    cursor = db.restaurants.find().sort([
+        ("borough", pymongo.ASCENDING),
+        ("address.zipcode", pymongo.DESCENDING)
+    ])
+
+update
+    result = db.restaurants.update_one(
+    {"name": "Juni"},
+    {
+        "$set": {
+            "cuisine": "American (New)"
+        },
+        "$currentDate": {"lastModified": True}
+    }
+)
+result.matched_count
+result.modified_count
+    result = db.restaurants.update_many(
+    {"address.zipcode": "10016", "cuisine": "Other"},
+    {
+        "$set": {"cuisine": "Category To Be Determined"},
+        "$currentDate": {"lastModified": True}
+    }
+)
+replace
+    result = db.restaurants.replace_one(
+    {"restaurant_id": "41704620"},
+    {
+        "name": "Vella 2",
+        "address": {
+            "coord": [-73.9557413, 40.7720266],
+            "building": "1480",
+            "street": "2 Avenue",
+            "zipcode": "10075"
+        }
+    }
+)
+
+remove
+result = db.restaurants.delete_many({"borough": "Manhattan"})
+result = db.restaurants.delete_one({"borough": "Manhattan"})
+result.deleted_count
+result = db.restaurants.delete_many({})
+db.restaurants.drop()
+
+db.collection.aggregate([<stage1>, <stage2>, ...])
+cursor = db.restaurants.aggregate(
+    [
+        {"$group": {"_id": "$borough", "count": {"$sum": 1}}}
+    ]
+)
+cursor = db.restaurants.aggregate(
+    [
+        {"$match": {"borough": "Queens", "cuisine": "Brazilian"}},
+        {"$group": {"_id": "$address.zipcode", "count": {"$sum": 1}}}
+    ]
+)
+
+db.restaurants.create_index([("cuisine", pymongo.ASCENDING)])
+db.restaurants.create_index([
+    ("cuisine", pymongo.ASCENDING),
+    ("address.zipcode", pymongo.DESCENDING)
+])

@@ -1,0 +1,53 @@
+mogodb 复制集
+    主从模式已经过时了，官方推荐使用复制集
+
+1. 要求
+    复制集的个数为奇数个
+    互相之间能联通
+
+2. 对应公网连内网 用openvpn
+    公网
+    wget https://git.io/vpn -O openvpn-install.sh && bash openvpn-install.sh
+    iptables -t nat --A POSTROUTING -s 10.8.0.0/24 -o eth0  -j MASQUERADE
+    配置完成将client文件发送到内网
+
+    内网
+    安装openvpn
+        yum install epel-release
+        yum install openvpn -y
+    启动
+        openvpn <config file>
+    互相ping通即可
+
+3. mongodb设置
+    config file 注意，同一个复制集的replSet命名相同
+        port = 27016
+        bind_ip = 0.0.0.0
+        dbpath = ./data
+        logpath = ./log/mongo.log
+        replSet = rs0
+        fork = true
+    在不同的机器启动mongod实例，注意配好端口
+    在主节点上运行
+        config = { _id:"rs1", members:[
+                     {_id:0,host:"111.125.64.44:27017"},
+                     {_id:3,host:"111.125.64.44:27016"},
+                     {_id:2,host:"116.93.119.129:27016"}
+                ]
+         }
+         rs.initiate(config)  / 或者rs.reconfig(config)
+    没有报错的情况下，耐心等待同步
+
+4. 172.16.16.18 mongodb
+    27017 端口
+        /opt/mongodb/bin/mongod --dbpath /opt/mongodb/data --logpath /opt/mongodb/log --fork
+    27016 端口
+        /home/peichao/database/mongodb/bin/mongod --config /home/peichao/database/mongodb/rs1.conf
+
+    登陆mongodb
+        /home/peichao/database/mongodb/bin/mongo --port 27016
+        rs.slaveOk()
+        之后可以正常查看数据
+
+
+

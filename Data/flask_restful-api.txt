@@ -1,0 +1,69 @@
+flask restful-api
+
+1. requirememts
+    Flask==0.10.1
+    Flask-RESTful==0.3.5
+    pymongo==3.2.2
+
+2. flask resuful
+    http://flask-restful-cn.readthedocs.io/en/0.3.4/
+
+3. architecture
+    ├── api
+    │   ├── api.py
+    │   ├── api.pyc
+    │   ├── common          #　通用函数
+    │   │   ├── __init__.py
+    │   │   ├── __init__.pyc
+    │   │   ├── mongodb.py
+    │   │   └── mongodb.pyc
+    │   ├── __init__.py
+    │   ├── __init__.pyc
+    │   └── resources       #　api的接口对应的函数
+    │       ├── complaint.py
+    │       ├── complaint.pyc
+    │       ├── __init__.py
+    │       ├── __init__.pyc
+    │       ├── material.py
+    │       └── material.pyc
+    └── flaskr.py
+
+
+4. 驱动文件flaskr.py
+    from flask import Flask
+    from api.api import api_bp
+
+    app = Flask(__name__)
+    app.register_blueprint(api_bp)
+
+
+    if __name__ == '__main__':
+        app.run(debug=True, host='0.0.0.0', port=5000)
+
+
+5. api.py
+    import json
+
+    from flask import Blueprint, make_response  # blueprint 方式，相当于app
+    from flask_restful import Api
+
+    from .resources.complaint import Complaint
+    from .resources.material import Material
+
+    api_bp = Blueprint('api', __name__, url_prefix='/api')  #　app的路由，此处为/api
+    api = Api(api_bp)
+
+    # api下子目录对应的路由
+    api.add_resource(Complaint, '/complaint', '/complaint/<string:args>')
+    api.add_resource(Material, '/material', '/material/<string:args>')
+
+
+    @api.representation('application/json')
+    def output_json(data, code, headers=None):
+        “”“返回json格式的字串，Access-Control-Allow-Origin 此处加了个请求头，用于
+            允许跨站请求（CRSF）”“”
+        resp = make_response(json.dumps(data), code)
+        resp.headers.extend({"Access-Control-Allow-Origin": "*"})
+        return resp
+
+

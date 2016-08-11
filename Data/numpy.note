@@ -1,0 +1,24 @@
+numpy
+
+1. data struct
+    bool
+    int
+    uint
+    float
+    complex
+
+2. 使用数据类型
+    numpy.int_([1, 2, 3])
+    numpy.arange(3, dtype=numpy.uint8)
+
+3. 转换数据类型
+    a = numpy.int_(1)
+    b = a.astype(float)     # numpy 把基本python类型转换成numpy.*类型
+                                int as int_, float as float_,
+                                bool as bool_, complex as complex_
+    b = numpy.float(a)
+
+4. 查看数据类型
+    a = numpy.int_(1)
+    a.dtype
+    np.issubdtype(a, int)
