@@ -14,10 +14,11 @@
 
 3. install plugins
     bin/plugin install mobz/elasticsearch-head
-    bin/plugin install license
-    bin/plugin install watcher
-    bin/plugin install shield
-    bin/shield/esusers useradd admin -r admin
+    # bin/plugin install license
+    # bin/plugin install watcher
+    # bin/plugin install shield
+    # bin/shield/esusers useradd admin -r admin
+    # try using elastalert and search-guard instead of charging plugins
 
 
 4. run：
