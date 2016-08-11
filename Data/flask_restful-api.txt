@@ -15,17 +15,13 @@ flask restful-api
     │   ├── common          #　通用函数
     │   │   ├── __init__.py
     │   │   ├── __init__.pyc
-    │   │   ├── mongodb.py
-    │   │   └── mongodb.pyc
     │   ├── __init__.py
     │   ├── __init__.pyc
     │   └── resources       #　api的接口对应的函数
-    │       ├── complaint.py
-    │       ├── complaint.pyc
     │       ├── __init__.py
     │       ├── __init__.pyc
-    │       ├── material.py
-    │       └── material.pyc
+    │       ├── test.py
+    │       └── test.pyc
     └── flaskr.py
 
 
@@ -47,15 +43,15 @@ flask restful-api
     from flask import Blueprint, make_response  # blueprint 方式，相当于app
     from flask_restful import Api
 
-    from .resources.complaint import Complaint
-    from .resources.material import Material
+    from .resources.test import Class1
+    from .resources.test import Class2
 
     api_bp = Blueprint('api', __name__, url_prefix='/api')  #　app的路由，此处为/api
     api = Api(api_bp)
 
     # api下子目录对应的路由
-    api.add_resource(Complaint, '/complaint', '/complaint/<string:args>')
-    api.add_resource(Material, '/material', '/material/<string:args>')
+    api.add_resource(Class1, '/prefix_1', '/prefix_1/<string:args>')
+    api.add_resource(Class2, '/prefix_2', '/prefix_2/<string:args>')
 
 
     @api.representation('application/json')

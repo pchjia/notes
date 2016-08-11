@@ -1,13 +1,13 @@
 from elasticsearch import Elasticsearch
-es = Elasticsearch(['http://admin:51talk@172.16.16.14:9200/'])
+es = Elasticsearch(['http://username:passwd@ip:port'])
 data = {
     "username": "test1",
     "uid": 12,
-    "server": "web",
-    "code": 201,
+    "server": "server1",
+    "code": 200,
     "@timestamp": "2016-08-01T11:03:17+0806"
 }
-es.create('login', doc_type='web', body=data, id=1)
+es.create('index', doc_type='type', body=data, id=1)
 index = es.indices
 
 a = {
@@ -18,8 +18,8 @@ a = {
           }
       }
     }
-index.create('login-2016-08-02')
-index.put_mapping(index='login', doc_type='web', body=a)
+index.create('report-2016-08-02')
+index.put_mapping(index='index', doc_type='type', body=a)
 
 
 timezone

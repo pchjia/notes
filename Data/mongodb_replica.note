@@ -30,9 +30,9 @@ mogodb 复制集
     在不同的机器启动mongod实例，注意配好端口
     在主节点上运行
         config = { _id:"rs1", members:[
-                     {_id:0,host:"111.125.64.44:27017"},
-                     {_id:3,host:"111.125.64.44:27016"},
-                     {_id:2,host:"116.93.119.129:27016"}
+                     {_id:0,host:"ip:port"},
+                     {_id:3,host:"ip:port"},
+                     {_id:2,host:"ip:port"}
                 ]
          }
          rs.initiate(config)  / 或者rs.reconfig(config)
