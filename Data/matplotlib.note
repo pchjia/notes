@@ -1,4 +1,4 @@
-matplotlib
+matplotlib http://matplotlib.org/genindex.html
 
 1. 导入
     import matplotlib.pyplot as plt     # 取别名
@@ -27,5 +27,9 @@ matplotlib
     plt.annotate('annotate', xy=(2, 1), xytext=(3, 4),
             arrowprops=dict(facecolor='black', shrink=0.05))
 
+5. Image
+    from scipy.misc import imread, imresize
+    img = imread('assets/cat.jpg')
+    plt.imshow(np.uint8(img))
 
 plt.gca() # 得到当前的axes
