@@ -85,7 +85,7 @@ numpy http://docs.scipy.org/doc/numpy/reference/
 
         np.hstack((a, b)) np.column_stack((a, b))   # 水平组合
         np.vstack((a, b)) np.row_stack((a, b))      # 垂直组合
-        np.contatenate((a, b), axis=0)              # axis: 0 垂直, 1 水平
+        np.concatenate((a, b), axis=0)              # axis: 0 垂直, 1 水平
 
     # split
         np.split                        # 水平分割
