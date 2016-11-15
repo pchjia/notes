@@ -1,0 +1,39 @@
+reference https://mesos.apache.org/gettingstarted/
+
+/usr/local/sbin/mesos-start-masters.sh
+/usr/local/sbin/mesos-start-agents.sh
+
+1. mesos-master-env.sh
+  export MESOS_zk=zk://mongo:2181,database:2181,jenkins:2181/mesos
+  export MESOS_quorum=2
+  export MESOS_log_dir=/var/log/mesos/master   # 设置日志目录
+  export MESOS_work_dir=/opt/mesos/master  # 设置work目录，会存放一些运行信息
+  export MESOS_ip=172.16.16.18                      # 设置IP
+  # export MESOS_port=5050                       # 设置PORT，默认是5050
+  export MESOS_CLUSTER=MesosCluster            # 设置集群名称
+  export MESOS_hostname=mongo                  # 设置master hostname
+  # export MESOS_logging_level=INFO              # 设置日志级别
+  # export MESOS_offer_timeout=60secs            # 设置offer的超时时间
+  # export MESOS_agent_ping_timeout=15         # 设置ping 超时时间，默认15s
+  # export MESOS_allocation_interval=1         # 设置资源 allocation间隔，默认1s
+
+
+2. mesos-agent-env.sh
+  export MESOS_master=zk://mongo:2181,database:2181,jenkins:2181/mesos
+  export MESOS_log_dir=/var/log/mesos/agent
+  export MESOS_work_dir=/opt/mesos/agent
+  export MESOS_logging_level=INFO
+  # export MESOS_isolation=cgroups
+  export MESOS_hadoop_home=/opt/hadoop/hadoop-2.7.3
+
+
+3. masters
+  mongo
+  database
+  jenkins
+
+4. slaves
+  jenkins
+  mongo
+  database
+  pc-train
