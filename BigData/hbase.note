@@ -1,0 +1,34 @@
+reference https://hbase.apache.org/book.html
+
+bin/start-hbase.sh
+
+1. hbase-site.xml
+    <configuration>
+      <property>
+        <name>hbase.rootdir</name>
+        <value>hdfs://HadoopCluster/hbase</value>
+      </property>
+      <property>
+        <name>hbase.zookeeper.property.dataDir</name>
+        <value>/opt/zookeeper/data</value>
+      </property>
+      <property>
+         <name>hbase.cluster.distributed</name>
+         <value>true</value>
+      </property>
+      <property>
+        <name>hbase.master</name>
+        <value>mongo:60000</value>
+      </property>
+      <property>
+         <name>hbase.zookeeper.quorum</name>
+         <value>mongo,database,jenkins</value>
+      </property>
+    </configuration>
+
+2. regionservers
+    database
+    jenkins
+
+3. backup-masters
+    database
