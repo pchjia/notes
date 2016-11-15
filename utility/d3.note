@@ -1,0 +1,129 @@
+d3 notes
+
+1. select
+    .style      d3.selectAll('circle').style('fill', 'red')
+    .attr       d3.selectAll('rect').attr('width', 10)
+    .classed    d3.select('.item').classed('selected', true)
+    .property   d3.selectAll('.checkbox').property('checked', false)
+    .text       d3.select('div.title').text('My new book')
+    .html       d3.select('.legend').html('<div class="block"></div><div>0 - 10</div>')
+    .on
+        click   Element has been clicked
+        mouseenter  Mouse pointer has moved onto the element
+        mouseover   Mouse pointer has moved onto the element or its children
+        mouseleave  Mouse pointer has moved off the element
+        mouseout    Mouse pointer has moved off the element or its children
+        mousemove   Mouse pointer has moved over the element
+            d3.selectAll('circle')
+              .on('click', function(d, i) {
+                d3.select(this)
+                  .style('fill', 'orange');
+              });
+
+    .append
+        d3.selectAll('g.item')
+          .append('text')
+          .text(function(d, i) {
+            return i + 1;
+          });
+    .insert
+        d3.selectAll('g.item')
+          .insert('text', 'circle')
+          .text(function(d, i) {
+            return i + 1;
+          });
+    .remove
+        d3.selectAll('circle')
+          .remove();
+
+    .each
+        d3.selectAll('circle')
+          .each(function(d, i) {
+            var odd = i % 2 === 1;
+
+            d3.select(this)
+              .style('fill', odd ? 'orange' : '#ddd')
+              .attr('r', odd ? 40 : 20);
+          });
+    .call
+        d3.selectAll('circle')
+          .each(function(selection) {
+            var odd = i % 2 === 1;
+
+            selection
+              .style('fill', odd ? 'orange' : '#ddd')
+              .attr('r', odd ? 40 : 20);
+          });
+
+    .filter
+        d3.selectAll('circle')
+          .filter(function(d, i) {
+            return i % 2 === 0;
+          })
+          .style('fill', 'orange');
+    .sort (after join)
+        d3.selectAll('.person')
+        .sort(function(a, b) {
+          return b.score - a.score;
+        });
+
+2. data join
+    var data = [1, 2, 3, 4]
+    d3.selectAll('circle')
+        .data(data)
+        .attr('r', function(d){
+            return d*10;
+        })
+
+    d3.selectAll('circle')
+        .data(data, function(d) {   # key function, bind ID to this element
+            return d;
+        })
+        .attr('r', function(d){
+            return d*10;
+        })
+
+3. enter exit
+    var myData = ['A', 'B', 'C', 'D', 'E'];
+
+    # update entring elements
+    d3.select('#content')
+        .selectAll('div')
+        .data(myData)
+        .enter()
+        .append('div')
+        .text(function(d) {         # only called on appended elements
+          return d;
+        });
+
+    # update existing elements
+    var u = d3.select('#content')
+        .selectAll('div')
+        .data(myData)
+        .enter()
+        .append('div');
+    u.text(function(d) {
+          return d;
+        });
+
+    # update all elements
+    var u = d3.select('#content')
+        .selectAll('div')
+        .data(myData)
+    u.enter()
+        .append('div')
+        .merge(u)                   # merge selections together
+        .text(function(d) {
+          return d;
+        });
+
+    u.exit().remove();
+
+4. d3.csv()/d3.tsv()
+    d3.csv('uri', callback_function)
+
+
+
+
+
+

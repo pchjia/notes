@@ -1,0 +1,90 @@
+web basis
+
+1. html notes
+    <!DOCTYPE html>
+    html
+    head
+        meta
+        link
+        title
+        style
+        script
+    body
+        h1/h2/h3/h4
+        p
+        ul/ol/li
+        em
+        strong
+        a
+        span
+        div
+
+2. css
+    1). definition
+        selector1, selector2, p {
+            property: value;
+            font-size: 12px;
+            line-height: 14px;
+            color: orange;
+        }
+        h1 em               # descendant
+        .bar.highlight      # multi class
+        div.sidebar         # div + class
+        #button.on          # id + class
+
+    2). property
+        margin: 10px;
+        padding: 25px;
+        background-color: yellow;
+        color: pink;
+        font-family: Helvetica, Arial, sans-serif;
+
+3. javascript
+    1). variables definition
+        var name = value;                   # name
+        var array = [0, 1, 2, 3, 4]         # array[index]
+        var obkects = {                     # objects.key
+            key: value;
+        }
+        eg:
+            var geoJson = {
+                "type": "FeatureCollection",
+                "features": [
+                    {
+                        "type": "Feature",
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": [ 150.1282427, -24.471803 ] # longitude, latitude
+                        },
+                        "properties": {
+                            "type": "town"
+                        }
+                    }
+                ]
+            }
+    2). operators
+        + - * /
+        == != < > <= >=
+
+    3). control
+        if (test) {
+            code;
+        } else if (){
+            code;
+        } else {
+            code;
+        }
+
+        for(init; test; update) {
+            code
+        }
+    4). function
+        var funName = function(param) {  # the same as function funName(param)
+            code;
+            return value;
+        }
+    5). commonts
+        //
+        /* */
+    6). refer
+        <script type="text/javascript"> code; </script>

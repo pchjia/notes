@@ -1,0 +1,35 @@
+matplotlib http://matplotlib.org/genindex.html
+
+1. 导入
+    import matplotlib.pyplot as plt     # 取别名
+    import numpy as np
+
+2. 常用选项
+    np.arange(start, end, boot_step)            # 得到arange列表
+    plt.title('title for this figure')          # 标题
+    plt.xlabel('the label for x')               # x轴标签
+    plt.ylabel('the laben for y')               # y轴标签
+    plt.axis([xmin, xmax, ymin, ymax])          # x 和 y 轴的取值范围
+    plt.grid(True)                              # 网格模式
+    plt.plot([list_of_x], [list_of_y], 'ro')    # 画图
+    plt.show()                                  # 将图形显示出来
+
+3. 多图模式
+    plt.figure(1)                               # 选取图形
+    plot.subplot(numrows, numcols, fignum)      # 选定当前图像，在这个图像
+
+4. 图片注释
+    plt.text(0.95, 0.01, 'colored text in axes coords',
+        verticalalignment='bottom', horizontalalignment='right',
+        transform=ax.transAxes,
+        color='green', fontsize=15)
+
+    plt.annotate('annotate', xy=(2, 1), xytext=(3, 4),
+            arrowprops=dict(facecolor='black', shrink=0.05))
+
+5. Image
+    from scipy.misc import imread, imresize
+    img = imread('assets/cat.jpg')
+    plt.imshow(np.uint8(img))
+
+plt.gca() # 得到当前的axes

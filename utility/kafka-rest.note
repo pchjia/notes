@@ -1,0 +1,29 @@
+kafka rest
+
+1. post data to topic
+POST http://172.16.16.18:8082/topics/test_3
+Content-Type application/vnd.kafka.json.v1+json
+
+{
+    "records":[
+        {
+            "value":"&Table_id=4&Cid=576460752303426104&Uid=678690767&StepID=100&Target_key=1470122565&&Result=-1&Rlt_code=-1&Class_key=1470124023"
+        }
+    ]
+}
+
+2. post consumer
+POST http://172.16.16.18:8082/consumers/my_json_consumer
+Content-Type application/vnd.kafka.v1+json
+
+{
+    "name": "my_consumer_instance",
+    "format": "json",
+    "auto.offset.reset": "smallest"
+}
+
+3. consume data
+GET http://172.16.16.18:8082/consumers/my_json_consumer/instances/my_consumer_instance/topics/topic_id
+
+4. delete consumer
+DELETE http://172.16.16.18:8082/consumers/my_json_consumer/instances/my_consumer_instance

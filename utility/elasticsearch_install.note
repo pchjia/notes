@@ -1,0 +1,103 @@
+安装elasticsearch作为监控数据库
+
+1. download:
+    url: https://www.elastic.co/downloads/elasticsearch
+
+2. uncompress and config
+    tar -zxf elasticsearch*.tar.gz
+    cd elasticsearch*
+    config:
+        path.data: /opt/elasticsearch/data
+        path.logs: /opt/elasticsearch/logs
+        network.host: 0.0.0.0
+        http.port: 9200
+
+3. install plugins
+    bin/plugin install mobz/elasticsearch-head
+    bin/plugin install license
+    bin/plugin install watcher
+    bin/plugin install shield
+    bin/shield/esusers useradd admin -r admin
+
+
+4. run：
+    ./bin/elasticsearch
+
+5. create timestamp mapping:
+    PUT login
+    {
+        "mappings": {
+            "web": {
+                "properties": {
+                    "@timestamp" : {
+                    "type" : "date",
+                    "format" : "date_time_no_millis"   # utc time
+                  }
+                }
+            }
+            "svc": {
+                "properties": {
+                    "@timestamp" : {
+                    "type" : "date",
+                    "format" : "date_time_no_millis"   # utc time
+                  }
+                }
+            }
+        },
+        "settings" : {
+            "number_of_shards" : 2,
+            "number_of_replicas" : 1
+        }
+    }
+    PUT /link
+    {
+        "mappings": {
+            "udp": {
+                "properties" : {
+                    "username" : {
+                        "index" : "analyzed",
+                       "omit_norms" : true,
+                       "type" : "string",
+                       "fields" : {
+                            "raw" : {
+                                 "ignore_above" : 256,
+                                  "index" : "not_analyzed",
+                                  "type" : "string"
+                              }
+                        }
+                    },
+                    "servername" : {
+                        "index" : "analyzed",
+                      "omit_norms" : true,
+                       "type" : "string",
+                       "fields" : {
+                            "raw" : {
+                                 "ignore_above" : 256,
+                                  "index" : "not_analyzed",
+                                  "type" : "string"
+                              }
+                        }
+                    }
+                }
+            }
+        },
+        "settings" : {
+            "number_of_shards" : 2,
+            "number_of_replicas" : 1
+        }
+    }
+
+5. put data:
+    PUT /login/web/1?pretty
+    {
+        "username": "test1",
+        "code": 201,
+        "@timestamp": "2016-08-01T11:03:17+0806"
+    }
+
+
+note:
+    PUT /index/type/id?pretty
+    {
+        # json object
+    }
