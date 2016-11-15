@@ -1,0 +1,25 @@
+run spark on mesos
+
+bin/spark-submit python-file.py
+
+1. spark-env.sh
+    export MESOS_NATIVE_JAVA_LIBRARY=/usr/local/lib/libmesos.so
+    export HADOOP_HOME=/opt/hadoop/hadoop-2.7.3
+    export HADOOP_CONF_DIR=$HADOOP_HOME/etc/hadoop
+    
+2. spark.defaults.conf
+    spark.master                     mesos://zk://mongo:2181,database:2181,jenkins:2181/mesos
+    # spark.driver.memory             1g
+    # spark.core.max          4
+    # spark.executor.memory       1g
+    zeppelin.pyspark.python     python
+    spark.mesos.coarse      true
+    #
+    # spark.eventLog.enabled           true
+    # spark.eventLog.dir               hdfs://namenode:8021/directory
+    # spark.serializer                 org.apache.spark.serializer.KryoSerializer
+    # spark.driver.memory              5g
+    # spark.executor.extraJavaOptions  -XX:+PrintGCDetails -Dkey=value -Dnumbers="one two three"
+    # spark.executor.uri              hdfs://HadoopCluster/data/spark-2.0.1-bin-hadoop2.7.tgz
+    spark.mesos.executor.home       /opt/spark/spark-2.0.1-bin-hadoop2.7
+
