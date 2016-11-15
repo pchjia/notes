@@ -1,0 +1,108 @@
+Hadoop HA
+
+1. hdfs zkfc -formatZK
+2. start all journalnode
+3. hdfs namenode -format
+4. start-dfs.sh
+5. (backup node) hdfs namenode -bootstrapStandby
+6. (backup node) hadoop-daemon.sh start namenode
+
+
+core-site.xml
+<configuration>
+        <property>
+          <name>fs.defaultFS</name>
+          <value>hdfs://HadoopCluster</value>
+        </property>
+       <property>
+           <name>ha.zookeeper.quorum</name>
+           <value>mongo:2181,database:2181,jenkins:2181</value>
+         </property>
+        <property>
+                <name>hadoop.tmp.dir</name>
+                <value>file:///opt/hadoop/temp</value>
+                <description>Abase for other temporary directories.</description>
+        </property>
+</configuration>
+
+
+
+hdfs-site.xml
+<configuration>
+        <property>
+          <name>dfs.nameservices</name>
+          <value>HadoopCluster</value>
+        </property>
+        <property>
+          <name>dfs.ha.namenodes.HadoopCluster</name>
+          <value>nn1,nn2</value>
+        </property>
+        <property>
+          <name>dfs.namenode.rpc-address.HadoopCluster.nn1</name>
+          <value>mongo:8020</value>
+        </property>
+        <property>
+          <name>dfs.namenode.rpc-address.HadoopCluster.nn2</name>
+          <value>database:8020</value>
+        </property>
+        <property>
+          <name>dfs.namenode.http-address.HadoopCluster.nn1</name>
+          <value>mongo:50070</value>
+        </property>
+        <property>
+          <name>dfs.namenode.http-address.HadoopCluster.nn2</name>
+          <value>database:50070</value>
+        </property>
+        <property>
+          <name>dfs.namenode.shared.edits.dir</name>
+          <value>qjournal://mongo:8485;database:8485;jenkins:8485/HadoopCluster</value>
+        </property>
+        <property>
+          <name>dfs.journalnode.edits.dir</name>
+          <value>/opt/hadoop/journal</value>
+        </property>
+        <property>
+          <name>dfs.client.failover.proxy.provider.HadoopCluster</name>
+          <value>org.apache.hadoop.hdfs.server.namenode.ha.ConfiguredFailoverProxyProvider</value>
+        </property>
+        <property>
+          <name>dfs.ha.fencing.methods</name>
+          <value>shell(/bin/true)</value>
+        </property>
+        <property>
+               <name>dfs.ha.fencing.ssh.connect-timeout</name>
+               <value>30000</value>
+        </property>
+        <property>
+          <name>dfs.ha.fencing.ssh.private-key-files</name>
+          <value>/home/pchjia/.ssh/id_rsa</value>
+        </property>
+          <property>
+           <name>dfs.ha.automatic-failover.enabled</name>
+           <value>true</value>
+         </property>
+         <property>
+                 <name>dfs.namenode.name.dir</name>
+                 <value>file:///opt/hadoop/name</value>
+         </property>
+         <property>
+                 <name>dfs.datanode.data.dir</name>
+                 <value>file:///opt/hadoop/data</value>
+         </property>
+         <property>
+                 <name>dfs.replication</name>
+                 <value>3</value>
+         </property>
+         <property>
+                 <name>dfs.webhdfs.enabled</name>
+                 <value>true</value>
+         </property>
+</configuration>
+
+
+
+/etc/hosts
+172.16.16.18    mongo       HadoopCluster
+172.16.16.14    database    HadoopCluster
+172.16.16.19    jenkins
+
