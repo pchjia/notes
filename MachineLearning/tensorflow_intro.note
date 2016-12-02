@@ -1,0 +1,66 @@
+tensorflow notes
+
+The role of the Python code is therefore to build this external computation graph, and to dictate which parts of the computation graph should be run.
+
+import tensor as tf
+Graph:
+    conpute flow
+Node: ops
+    operations in graph
+Tensor:
+    multi-dimensional array
+Session:
+    place graph ops onto device
+
+1. default graph
+    a = tf.constant([[1., 2.]])
+    b = tf.constant([[2.], [4.]])
+    prod = tf.matmul(a, b)
+
+    sess = tf.Session()
+    res = sess.run(product)
+    print(res)
+    sess.close()
+
+2. accelerate computation
+    tf.device("/gpu:1")         # use GPU
+    tf.Session("grpc://example.org:2222")       # use Cluster
+        tf.device("/job:ps/task:0")
+
+3. interactive session  (IPython Jupyter ...)   [Tensor].eval(), [Operation].run()
+    sess = tf.InteractiveSession()
+    prod.eval()
+    prod.run()
+
+4. tensor
+    constant
+        one = tf.constant(1)
+    variable
+        state = tf.Variable(0, name="counter")
+        one = tf.constant(1)
+        new_value = tf.add(state, one)
+        update = tf.assign(state, new_value)
+        init = tf.initialize_all_variables()
+        sess.run(init)
+        for _ in range(3):
+            sess.run(update)
+            print(sess.run(state))
+
+5. fetch: multi result, tensor only run each operate once
+    input1 = tf.constant([3.0])
+    input2 = tf.constant([2.0])
+    input3 = tf.constant([5.0])
+    intermed = tf.add(input2, input3)
+    mul = tf.mul(input1, intermed)
+
+    with tf.Session() as sess:
+      result = sess.run([mul, intermed])
+      print(result)
+
+6. feed: feed variable (tf.placeholder) with value
+    input1 = tf.placeholder(tf.float32)
+    input2 = tf.placeholder(tf.float32)
+    output = tf.mul(input1, input2)
+
+    with tf.Session() as sess:
+      print(sess.run([output], feed_dict={input1:[7.], input2:[2.]}))
